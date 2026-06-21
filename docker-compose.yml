@@ -1,0 +1,29 @@
+services:
+  demotokens:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: demotokens-server
+    container_name: demotokens
+    environment:
+      PORT: ${PORT:-3000}
+      PORT_MAX: ${PORT_MAX:-3010}
+      DB_PATH: /data/demotokens.db
+      LOG_DIR: /logs
+      NGINX_CONF: ${NGINX_CONF:-/etc/nginx/conf.d/demotokens.conf}
+      NGINX_RELOAD_CMD: ${NGINX_RELOAD_CMD:-nginx -s reload}
+      # Empty string = same-origin proxy via nginx (recommended for Docker).
+      # Set to a full URL (e.g. https://app.example.com) for standalone PHP deployments.
+      PHP_BACKEND_URL: ${PHP_BACKEND_URL:-}
+      RELAY_SECRET: ${RELAY_SECRET}
+    ports:
+      - "80:80"                                    # nginx — domain-based victim traffic
+      - "${PORT:-3000}:${PORT:-3000}"              # Python — operator UI + direct access
+      - "${PHP_PORT:-9080}:8080"                       # PHP enrollment front-end (nginx + php-fpm)
+    restart: unless-stopped
+    volumes:
+      - ./logs:/logs
+      - demotokens-data:/data
+
+volumes:
+  demotokens-data:
