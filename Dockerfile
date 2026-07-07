@@ -13,7 +13,7 @@ WORKDIR /app
 
 COPY *.py .
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY php-enrollment/ /var/www/php-enrollment/
+#COPY php-enrollment/ /var/www/php-enrollment/
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh \
